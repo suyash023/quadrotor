@@ -28,6 +28,8 @@ class IMU {
   float roll = 0;
   float pitch = 0;
   float yaw = 0;
+ private:
+  int mpu_addr = 0x68;
 
   public:
     
