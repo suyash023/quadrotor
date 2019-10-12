@@ -1,6 +1,7 @@
 #include "imu.h"
 #include "motor.h"
 #include "PIDController.h"
+#include "complimentaryFilter.h"
 
 
 void setup() {
