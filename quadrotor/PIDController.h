@@ -23,8 +23,9 @@
       float ReturnKpValue();
       float ReturnKiValue();
       float ReturnKdValue();
-      void updateErrorSum();
-      float updateLastError();
+      void UpdateErrorSum();
+      float UpdateLastError();
+      float RunPID();
  };
 
 
