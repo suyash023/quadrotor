@@ -17,8 +17,8 @@ class IMU {
   int16_t gyro_x_raw = 0;
   int16_t gyro_y_raw = 0;
   int16_t gyro_z_raw = 0;
-  int16_t acc_sentitivity = 16384;
-  int gyro_sensitvity = 131;
+  int16_t acc_sensitivity = 16384;
+  int gyro_sensitivity = 131;
   float acc_x = 0;
   float acc_y = 0;
   float acc_z = 0;
@@ -43,6 +43,7 @@ class IMU {
 
     void DisplayValues();
 
+    void GyroCorrection();
 
 
 
