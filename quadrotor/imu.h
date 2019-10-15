@@ -25,9 +25,12 @@ class IMU {
   float gyro_x = 0;
   float gyro_y = 0;
   float gyro_z = 0;
-  float roll = 0;
-  float pitch = 0;
-  float yaw = 0;
+  float roll_acc = 0;
+  float pitch_acc = 0;
+  float roll_gyro = 0;
+  float pitch_gyro = 0; 
+  float yaw_gyro = 0;
+  float lastTime = 0;
  private:
   int mpu_addr = 0x68;
 
