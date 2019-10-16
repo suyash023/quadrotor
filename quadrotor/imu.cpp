@@ -75,7 +75,7 @@ void IMU::ConvertToReal() {
     Serial.println(roll_acc);
     Serial.print("The Pitch angle by accelerometer is: ");
     Serial.println(pitch_acc);
-    Serial.print("The Yaw angle by accelerometer is : ");
+    Serial.print("The Yaw angle by gyroscope is : ");
     Serial.println(yaw_gyro);
     Serial.print("The pitch angle by gyroscope is : ");
     Serial.println(pitch_gyro);
@@ -99,9 +99,9 @@ void IMU::ConvertToReal() {
   void IMU::ComputeRPY() {
     roll_acc = 180*atan2(acc_y,sqrt(acc_x * acc_x + acc_z * acc_z)) / 3.14;
     pitch_acc = 180*atan2(acc_z,sqrt(acc_x * acc_x + acc_y * acc_y)) / 3.14;
-    yaw_gyro = 180*(yaw_gyro + gyro_x * ((millis() - lastTime)/1000)) /3.14;
-    roll_gyro = 180*(roll_gyro + gyro_z* ((millis() - lastTime)/1000))/3.14;
-    pitch_gyro = 180*(pitch_gyro + gyro_y *((millis() - lastTime)/1000)/3.14; 
+    yaw_gyro = yaw_gyro + 180*(gyro_x * ((millis() - lastTime)/1000))/3.14;
+    roll_gyro = roll_gyro + 180*(gyro_z* ((millis() - lastTime)/1000))/3.14;
+    pitch_gyro = pitch_gyro + 180*(gyro_y *((millis() - lastTime)/1000))/3.14; 
     
   }
 
