@@ -31,6 +31,11 @@ class IMU {
   float pitch_gyro = 0; 
   float yaw_gyro = 0;
   float lastTime = 0;
+  bool gyro_corrected = false;
+  bool acc_corrected = false;
+  float corr_gyro_x = 0;
+  float corr_gyro_y = 0;
+  float corr_gyro_z = 0;
  private:
   int mpu_addr = 0x68;
 
@@ -47,6 +52,8 @@ class IMU {
     void DisplayValues();
 
     void GyroCorrection();
+
+    void AccelerometerCorrection();
 
 
 

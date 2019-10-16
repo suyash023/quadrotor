@@ -36,17 +36,18 @@ void IMU::ReadRawValues() {
 }
 
 
+
 /**
  * @brief Method to convert the raw value of accelerometer and gyroscope
  * to real values in g's and radians/sec
  */
 void IMU::ConvertToReal() {
-  this->acc_x = (float)this->acc_x_raw/this->acc_sensitivity;
-  this->acc_y = (float)this->acc_y_raw/this->acc_sensitivity;
-  this->acc_z = (float)this->acc_z_raw/this->acc_sensitivity;
-  this->gyro_x = (float)this->gyro_x_raw/this->gyro_sensitivity;
-  this->gyro_y = (float)this->gyro_y_raw/this->gyro_sensitivity;
-  this->gyro_z = (float)this->gyro_z_raw/this->gyro_sensitivity;
+  acc_x = (float)acc_x_raw/acc_sensitivity;
+  acc_y = (float)acc_y_raw/acc_sensitivity;
+  acc_z = (float)acc_z_raw/acc_sensitivity;
+  gyro_x = (float)gyro_x_raw/gyro_sensitivity;
+  gyro_y = (float)gyro_y_raw/gyro_sensitivity;
+  this->gyro_z = (float)gyro_z_raw/gyro_sensitivity;
 }
 
 
@@ -58,18 +59,18 @@ void IMU::ConvertToReal() {
 
   void IMU::DisplayValues() {
 
-    Serial.print("The Real value of accelerometer x-axis is: ");
-    Serial.println(acc_x);
-    Serial.print("The Real value of accelerometer y-axis is: ");
-    Serial.println(acc_y);
-    Serial.print("The Real value of accelerometer z-axis is: ");
-    Serial.println(acc_z);
-    Serial.print("The Real value of gyroscope x-axis is: ");
-    Serial.println(gyro_x);
-    Serial.print("The Real value of gyroscope y-axis is: ");
-    Serial.println(gyro_y);
-    Serial.print("The Real value of gyroscope x-axis is: ");
-    Serial.println(gyro_x);
+//    Serial.print("The Real value of accelerometer x-axis is: ");
+//    Serial.println(acc_x);
+//    Serial.print("The Real value of accelerometer y-axis is: ");
+//    Serial.println(acc_y);
+//    Serial.print("The Real value of accelerometer z-axis is: ");
+//    Serial.println(acc_z);
+//    Serial.print("The Real value of gyroscope x-axis is: ");
+//    Serial.println(gyro_x);
+//    Serial.print("The Real value of gyroscope y-axis is: ");
+//    Serial.println(gyro_y);
+//    Serial.print("The Real value of gyroscope z-axis is: ");
+//    Serial.println(gyro_z);
     Serial.print("The Roll angle by accelerometer is: ");
     Serial.println(roll_acc);
     Serial.print("The Pitch angle by accelerometer is: ");
@@ -80,9 +81,15 @@ void IMU::ConvertToReal() {
     Serial.println(pitch_gyro);
     Serial.print("The roll angle by gyroscope is : ");
     Serial.println(roll_gyro);
+    Serial.print("The gyroscope x correction is : ");
+    Serial.println(corr_gyro_x);
+    Serial.print("The gyroscope y correction is : ");
+    Serial.println(corr_gyro_y);
+    Serial.print("The gyroscope z correction is : ");
+    Serial.println(corr_gyro_y);
     Serial.print("Loop frequency is: ");
     Serial.println(millis()-lastTime);
-    delay(300); 
+    delay(10); 
   }
 
 
@@ -92,8 +99,32 @@ void IMU::ConvertToReal() {
   void IMU::ComputeRPY() {
     roll_acc = 180*atan2(acc_y,sqrt(acc_x * acc_x + acc_z * acc_z)) / 3.14;
     pitch_acc = 180*atan2(acc_z,sqrt(acc_x * acc_x + acc_y * acc_y)) / 3.14;
-    yaw_gyro = yaw_gyro + gyro_x * ((millis() - lastTime)/1000);
-    roll_gyro = roll_gyro + gyro_z* ((millis() - lastTime)/1000);
-    pitch_gyro = pitch_gyro + gyro_y *((millis() - lastTime)/1000); 
+    yaw_gyro = 180*(yaw_gyro + gyro_x * ((millis() - lastTime)/1000)) /3.14;
+    roll_gyro = 180*(roll_gyro + gyro_z* ((millis() - lastTime)/1000))/3.14;
+    pitch_gyro = 180*(pitch_gyro + gyro_y *((millis() - lastTime)/1000)/3.14; 
     
   }
+
+ /**
+ * @brief Method for correction of gyroscope values, when quadrotor is completely still
+ */
+
+ void IMU::GyroCorrection() {
+  if( gyro_corrected == false) {
+    for(int i = 0 ;i < 100; i++) {
+      ReadRawValues();
+      ConvertToReal();
+      corr_gyro_x = corr_gyro_x + gyro_x;
+      corr_gyro_y = corr_gyro_y + gyro_y;
+      corr_gyro_z = corr_gyro_z + gyro_z;
+    }
+    corr_gyro_x = corr_gyro_x/100;
+    corr_gyro_y = corr_gyro_y/100;
+    corr_gyro_z = corr_gyro_z/100;
+    gyro_corrected = true;
+  } else {
+    gyro_x = gyro_x - corr_gyro_x;
+    gyro_y = gyro_y - corr_gyro_y;
+    gyro_z = gyro_z - corr_gyro_z;
+  }
+}

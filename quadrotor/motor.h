@@ -12,12 +12,12 @@
 
 class Motor {
  public:
-    unsigned int motorSpeed = 0;
+    unsigned char motorSpeed = 0;
  private:
-    unsigned int motorPin = -1;
+    unsigned char motorPin = 0;
  public:
     void setMotorSpeed(int speedVoltLevel);
-    unsigned int getMotorSpeed();
+    unsigned char getMotorSpeed();
     void setMotorPin(unsigned int pin);
 };
 
