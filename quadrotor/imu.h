@@ -36,6 +36,8 @@ class IMU {
   float corr_gyro_x = 0;
   float corr_gyro_y = 0;
   float corr_gyro_z = 0;
+  float corr_acc_roll = 0;
+  float corr_acc_pitch = 0;
  private:
   int mpu_addr = 0x68;
 
@@ -47,13 +49,15 @@ class IMU {
 
     void ConvertToReal();
 
-    void ComputeRPY();
+    void ComputeRPacc();
+
+    void ComputeRPYgyro();
 
     void DisplayValues();
 
     void GyroCorrection();
 
-    void AccelerometerCorrection();
+    void AccCorrection();
 
 
 
