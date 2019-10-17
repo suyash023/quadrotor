@@ -22,10 +22,10 @@
  * @brief Method to read the raw values from accelerometer and gyroscope.
  */
 void IMU::ReadRawValues() {
-  Wire.beginTransmission(this->mpu_addr);
+  Wire.beginTransmission(mpu_addr);
   Wire.write(0x3b);
   Wire.endTransmission(false);
-  Wire.requestFrom(this->mpu_addr,14,true);
+  Wire.requestFrom(mpu_addr,14,true);
   acc_x_raw = Wire.read()<<8 | Wire.read();
   acc_y_raw = Wire.read()<<8 | Wire.read();
   acc_z_raw = Wire.read()<<8 | Wire.read();
@@ -47,7 +47,7 @@ void IMU::ConvertToReal() {
   acc_z = (float)acc_z_raw/acc_sensitivity;
   gyro_x = (float)gyro_x_raw/gyro_sensitivity;
   gyro_y = (float)gyro_y_raw/gyro_sensitivity;
-  this->gyro_z = (float)gyro_z_raw/gyro_sensitivity;
+  gyro_z = (float)gyro_z_raw/gyro_sensitivity;
 }
 
 
@@ -81,32 +81,41 @@ void IMU::ConvertToReal() {
     Serial.println(pitch_gyro);
     Serial.print("The roll angle by gyroscope is : ");
     Serial.println(roll_gyro);
-    Serial.print("The gyroscope x correction is : ");
-    Serial.println(corr_gyro_x);
-    Serial.print("The gyroscope y correction is : ");
-    Serial.println(corr_gyro_y);
-    Serial.print("The gyroscope z correction is : ");
-    Serial.println(corr_gyro_y);
+//    Serial.print("The gyroscope x correction is : ");
+//    Serial.println(corr_gyro_x);
+//    Serial.print("The gyroscope y correction is : ");
+//    Serial.println(corr_gyro_y);
+//    Serial.print("The gyroscope z correction is : ");
+//    Serial.println(corr_gyro_z);
+//    Serial.print("The accelerometer pitch correction is : ");
+//    Serial.println(corr_acc_roll);
+//    Serial.print("The accelerometer roll correction is : ");
+//    Serial.println(corr_acc_pitch);
     Serial.print("Loop frequency is: ");
     Serial.println(millis()-lastTime);
-    delay(10); 
+    delay(100); 
   }
 
 
   /**
-   * @brief method to compute the roll, pitch and yaw values from accelerometer and gyroscope
+   * @brief method to compute the roll, pitch  from accelerometer
    */
-  void IMU::ComputeRPY() {
+  void IMU::ComputeRPacc() {
     roll_acc = 180*atan2(acc_y,sqrt(acc_x * acc_x + acc_z * acc_z)) / 3.14;
-    pitch_acc = 180*atan2(acc_z,sqrt(acc_x * acc_x + acc_y * acc_y)) / 3.14;
-    yaw_gyro = yaw_gyro + 180*(gyro_x * ((millis() - lastTime)/1000))/3.14;
-    roll_gyro = roll_gyro + 180*(gyro_z* ((millis() - lastTime)/1000))/3.14;
-    pitch_gyro = pitch_gyro + 180*(gyro_y *((millis() - lastTime)/1000))/3.14; 
-    
+    pitch_acc = 180*atan2(acc_z,sqrt(acc_x * acc_x + acc_y * acc_y)) / 3.14; 
   }
 
+/**
+ * @brief method to compute the roll, pitch and yaw from gyroscopes 
+ */
+ void IMU::ComputeRPYgyro() {
+    yaw_gyro = yaw_gyro + 180*(gyro_x * ((millis() - lastTime)/1000))/3.14;
+    roll_gyro = roll_gyro + 180*(gyro_z* ((millis() - lastTime)/1000))/3.14;
+    pitch_gyro = pitch_gyro + 180*(gyro_y *((millis() - lastTime)/1000))/3.14;
+ }
+
  /**
- * @brief Method for correction of gyroscope values, when quadrotor is completely still
+ * @brief Method for correction of gyroscope values, when quadrotor is completely still (first 100 readings)
  */
 
  void IMU::GyroCorrection() {
@@ -128,3 +137,25 @@ void IMU::ConvertToReal() {
     gyro_z = gyro_z - corr_gyro_z;
   }
 }
+
+/**
+ * @brief Method to correct for the accelerometer reading
+ */
+
+ void IMU::AccCorrection() {
+  if ( acc_corrected == false) {
+    for(int i = 0; i< 100; i++) {
+      ReadRawValues();
+      ConvertToReal();
+      ComputeRPacc();
+      corr_acc_roll = corr_acc_roll + roll_acc;
+      corr_acc_pitch = corr_acc_pitch + pitch_acc;
+    }
+    corr_acc_roll = corr_acc_roll / 100;
+    corr_acc_pitch = corr_acc_pitch /100;
+    acc_corrected = true;
+  } else {
+    roll_acc = roll_acc - corr_acc_roll;
+    pitch_acc = pitch_acc - corr_acc_pitch;
+  }
+ }
