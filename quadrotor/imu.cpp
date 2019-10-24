@@ -93,7 +93,7 @@ void IMU::ConvertToReal() {
 //    Serial.println(corr_acc_pitch);
     Serial.print("Loop frequency is: ");
     Serial.println(millis()-lastTime);
-    delay(100); 
+    delay(10); 
   }
 
 
@@ -155,7 +155,7 @@ void IMU::ConvertToReal() {
     corr_acc_pitch = corr_acc_pitch /100;
     acc_corrected = true;
   } else {
-    roll_acc = roll_acc - corr_acc_roll;
+    roll_acc = corr_acc_roll - roll_acc;
     pitch_acc = pitch_acc - corr_acc_pitch;
   }
  }
