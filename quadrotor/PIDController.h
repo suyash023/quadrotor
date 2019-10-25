@@ -20,12 +20,8 @@
 
   public:
       bool SetPIDValues(float kp, float ki, float kd);
-      float ReturnKpValue();
-      float ReturnKiValue();
-      float ReturnKdValue();
-      void UpdateErrorSum();
-      float UpdateLastError();
-      float RunPID();
+      float RunPID(float currentValue, float TargetValue);
+      void ResetErrors();
  };
 
 
