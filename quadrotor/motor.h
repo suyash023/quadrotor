@@ -17,7 +17,6 @@ class Motor {
     unsigned char motorPin = 0;
  public:
     void setMotorSpeed(int speedVoltLevel);
-    unsigned char getMotorSpeed();
     void setMotorPin(unsigned int pin);
 };
 
