@@ -6,6 +6,7 @@
 IMU mpu6050;
 ComplimentaryFilter cf;
 PIDController pitchControl, rollControl, yawControl;
+Motor motor1, motor2, motor3, motor4;
 void setup() {
   // put your setup code here, to run once:
   mpu6050.Setup();
@@ -17,6 +18,10 @@ void setup() {
   rollControl.SetPIDValues(1, 0, 0);
   pitchControl.SetPIDValues(1, 0, 0);
   yawControl.SetPIDValues(1, 0, 0);
+  motor1.setMotorPin(3);
+  motor2.setMotorPin(4);
+  motor3.setMotorPin(10);
+  motor4.setMotorPin(11);
 
 
 }
