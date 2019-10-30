@@ -18,16 +18,15 @@ void setup() {
   rollControl.SetPIDValues(1, 0, 0);
   pitchControl.SetPIDValues(1, 0, 0);
   yawControl.SetPIDValues(1, 0, 0);
-  motor1.setMotorPin(3);
-  motor2.setMotorPin(4);
-  motor3.setMotorPin(10);
-  motor4.setMotorPin(11);
-
-
+  motor1.setMotorPin(11);
+  motor2.setMotorPin(3);
+  motor3.setMotorPin(6);
+  motor4.setMotorPin(10);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+
   mpu6050.lastTime = millis();
   mpu6050.ReadRawValues();
   mpu6050.ConvertToReal();
@@ -37,15 +36,21 @@ void loop() {
   mpu6050.AccCorrection();
   float rollReading = cf.FilterRollImplementation(  mpu6050.roll_acc, mpu6050.roll_gyro);
   float pitchReading = cf.FilterPitchImplementation( mpu6050.pitch_acc, mpu6050.pitch_gyro);
-  float rollCorrection = rollControl.RunPID( rollReading, 0);
-  float pitchCorrection = pitchControl.RunPID( pitchReading, 0);
-  float yawCorrection = yawControl.RunPID( mpu6050.gyro_x, 0);
+  unsigned char rollCorrection = (unsigned char)(rollControl.RunPID( rollReading, 0)/2);
+  unsigned char pitchCorrection = (unsigned char)(pitchControl.RunPID( pitchReading, 0)/2);
+  unsigned char yawCorrection = (unsigned char)(yawControl.RunPID( mpu6050.gyro_x, 0)/2);
   cf.DisplayValues(rollReading, pitchReading, 0);
-  Serial.print("Roll correction is: ");
-  Serial.println(rollCorrection);
-  Serial.print("Pitch correction is: ");
-  Serial.println(pitchCorrection);
-  Serial.print("Yaw correction is: ");
-  Serial.println(yawCorrection);
+  motor1.setMotorSpeed((motor1.motorSpeed + rollCorrection));
+  motor4.setMotorSpeed((motor4.motorSpeed + rollCorrection));
+  motor2.setMotorSpeed((motor2.motorSpeed - rollCorrection));
+  motor3.setMotorSpeed((motor3.motorSpeed - rollCorrection));
+  Serial.print("Motor 1 speed: ");
+  Serial.println(motor1.motorSpeed);
+  Serial.print("Motor 2 speed: ");
+  Serial.println(motor2.motorSpeed);
+  Serial.print("Motor 3 speed: ");
+  Serial.println(motor3.motorSpeed);
+  Serial.print("Motor 4 speed: ");
+  Serial.println(motor4.motorSpeed);
   delay(10); 
 }
