@@ -7,6 +7,8 @@ IMU mpu6050;
 ComplimentaryFilter cf;
 PIDController pitchControl, rollControl, yawControl;
 Motor motor1, motor2, motor3, motor4;
+int quadSpeed = 0;
+int incrementalSpeed = 10;
 void setup() {
   // put your setup code here, to run once:
   mpu6050.Setup();
@@ -22,11 +24,43 @@ void setup() {
   motor2.setMotorPin(3);
   motor3.setMotorPin(6);
   motor4.setMotorPin(10);
+  //motor1.StartUp(50);
+  //motor2.StartUp(50);
+  //motor3.StartUp(50);
+  //motor4.StartUp(50);
+  //quadSpeed = 50;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  if(Serial.available()) {
+    char command;
+    command = Serial.read();
+    if(command == 'w') {
+      Serial.print("quad speed: ");
+      if ( quadSpeed < 255) {
+        quadSpeed = quadSpeed + incrementalSpeed;
+      } else {
+        Serial.println("Already at full speed");
+      }
+      Serial.println(quadSpeed);
+    } else if (command == 'x') {
+      Serial.print("quad speed: ");
+      if (quadSpeed > incrementalSpeed ) {
+        quadSpeed = quadSpeed - incrementalSpeed;
+      } else {
+        Serial.println("Already at low speed");
+      }
+      Serial.println(quadSpeed);
+    } else if (command == 'k') {
+      Serial.println("Kill Switch hit!");
+      motor1.setMotorSpeed(0);
+      motor2.setMotorSpeed(0);
+      motor3.setMotorSpeed(0);
+      motor4.setMotorSpeed(0);
+      quadSpeed = 0;
+    }
+  }
   mpu6050.lastTime = millis();
   mpu6050.ReadRawValues();
   mpu6050.ConvertToReal();
@@ -39,18 +73,20 @@ void loop() {
   unsigned char rollCorrection = (unsigned char)(rollControl.RunPID( rollReading, 0)/2);
   unsigned char pitchCorrection = (unsigned char)(pitchControl.RunPID( pitchReading, 0)/2);
   unsigned char yawCorrection = (unsigned char)(yawControl.RunPID( mpu6050.gyro_x, 0)/2);
-  cf.DisplayValues(rollReading, pitchReading, 0);
-  motor1.setMotorSpeed((motor1.motorSpeed + rollCorrection));
-  motor4.setMotorSpeed((motor4.motorSpeed + rollCorrection));
-  motor2.setMotorSpeed((motor2.motorSpeed - rollCorrection));
-  motor3.setMotorSpeed((motor3.motorSpeed - rollCorrection));
-  Serial.print("Motor 1 speed: ");
-  Serial.println(motor1.motorSpeed);
-  Serial.print("Motor 2 speed: ");
-  Serial.println(motor2.motorSpeed);
-  Serial.print("Motor 3 speed: ");
-  Serial.println(motor3.motorSpeed);
-  Serial.print("Motor 4 speed: ");
-  Serial.println(motor4.motorSpeed);
+  //cf.DisplayValues(rollReading, pitchReading, 0);
+  if (quadSpeed > 0 ) {
+    motor1.setMotorSpeed((quadSpeed + rollCorrection));
+    motor4.setMotorSpeed((quadSpeed + rollCorrection));
+    motor2.setMotorSpeed((quadSpeed - rollCorrection));
+    motor3.setMotorSpeed((quadSpeed - rollCorrection));
+  }
+  //Serial.print("Motor 1 speed: ");
+  //Serial.println(motor1.motorSpeed);
+  //Serial.print("Motor 2 speed: ");
+  //Serial.println(motor2.motorSpeed);
+  //Serial.print("Motor 3 speed: ");
+  //Serial.println(motor3.motorSpeed);
+  //Serial.print("Motor 4 speed: ");
+  //Serial.println(motor4.motorSpeed);
   delay(10); 
 }
