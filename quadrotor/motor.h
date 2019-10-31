@@ -18,6 +18,7 @@ class Motor {
  public:
     void setMotorSpeed(int speedVoltLevel);
     void setMotorPin(unsigned int pin);
+    void StartUp(int speedLevel);
 };
 
 #endif

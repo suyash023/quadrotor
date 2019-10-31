@@ -18,3 +18,11 @@ void Motor::setMotorPin(unsigned int pin) {
   pinMode( pin, OUTPUT);
   motorPin = pin;
 }
+
+void Motor::StartUp(int speedLevel) {
+  for(int i = 0 ; i <= speedLevel; i++ ) {
+    analogWrite(motorPin, speedLevel);
+    delay(100);
+  }
+  
+}
