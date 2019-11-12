@@ -24,11 +24,11 @@ void setup() {
   motor2.setMotorPin(3);
   motor3.setMotorPin(6);
   motor4.setMotorPin(10);
-  //motor1.StartUp(50);
-  //motor2.StartUp(50);
-  //motor3.StartUp(50);
-  //motor4.StartUp(50);
-  //quadSpeed = 50;
+  //motor1.StartUp(200);
+  //motor2.StartUp(200);
+  //motor3.StartUp(200);
+  //motor4.StartUp(200);
+  //quadSpeed = 200;
 }
 
 void loop() {
@@ -40,6 +40,10 @@ void loop() {
       Serial.print("quad speed: ");
       if ( quadSpeed < 255) {
         quadSpeed = quadSpeed + incrementalSpeed;
+        motor1.setMotorSpeed(quadSpeed);
+        motor2.setMotorSpeed(quadSpeed);
+        motor3.setMotorSpeed(quadSpeed);
+        motor4.setMotorSpeed(quadSpeed);
       } else {
         Serial.println("Already at full speed");
       }
@@ -48,6 +52,11 @@ void loop() {
       Serial.print("quad speed: ");
       if (quadSpeed > incrementalSpeed ) {
         quadSpeed = quadSpeed - incrementalSpeed;
+        motor1.setMotorSpeed(quadSpeed);
+        motor2.setMotorSpeed(quadSpeed);
+        motor3.setMotorSpeed(quadSpeed);
+        motor4.setMotorSpeed(quadSpeed);
+        
       } else {
         Serial.println("Already at low speed");
       }
@@ -88,5 +97,5 @@ void loop() {
   //Serial.println(motor3.motorSpeed);
   //Serial.print("Motor 4 speed: ");
   //Serial.println(motor4.motorSpeed);
-  delay(10); 
+  //delay(10); 
 }
