@@ -31,8 +31,8 @@ float PIDController::RunPID(float currentValue, float targetValue) {
   float errorDiff = 0;
   float correction;
   error = currentValue - targetValue;
-  Serial.print("Error is: ");
-  Serial.println(error);
+  //Serial.print("Error is: ");
+  //Serial.println(error);
   errorSum = errorSum + error;
   errorDiff = error - lastError;
   correction = kp* ( error ) + ki * ( errorSum ) + kd * (errorDiff);
