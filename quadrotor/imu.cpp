@@ -109,9 +109,9 @@ void IMU::ConvertToReal() {
  * @brief method to compute the roll, pitch and yaw from gyroscopes 
  */
  void IMU::ComputeRPYgyro() {
-    yaw_gyro = yaw_gyro + 180*(gyro_x * ((millis() - lastTime)/1000))/3.14;
-    roll_gyro = roll_gyro + 180*(gyro_z* ((millis() - lastTime)/1000))/3.14;
-    pitch_gyro = pitch_gyro + 180*(gyro_y *((millis() - lastTime)/1000))/3.14;
+    yaw_gyro =   180*(gyro_x * ((millis() - lastTime)/1000))/3.14;
+    roll_gyro =   180*(gyro_z* ((millis() - lastTime)/1000))/3.14;
+    pitch_gyro = 180*(gyro_y *((millis() - lastTime)/1000))/3.14;
  }
 
  /**

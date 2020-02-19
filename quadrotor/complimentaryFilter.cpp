@@ -54,9 +54,9 @@ bool ComplimentaryFilter::SetYawWeight(float value) {
  * @return the filtered value
  */
 
-float ComplimentaryFilter::FilterRollImplementation(float reading1, float reading2) {
+float ComplimentaryFilter::FilterRollImplementation(float prevReading, float reading1, float reading2) {
   float filteredValue;
-  filteredValue = (weightRoll * reading1) + ((1 - weightRoll) * reading2);
+  filteredValue = (weightRoll * reading1) + ((1 - weightRoll) * (prevReading + reading2));
   return filteredValue;
  }
 
@@ -66,9 +66,9 @@ float ComplimentaryFilter::FilterRollImplementation(float reading1, float readin
   * @param reading2 Reading from either accelerometer or gyroscope
   * @return the filtered value 
   */
- float ComplimentaryFilter::FilterPitchImplementation(float reading1, float reading2) {
+ float ComplimentaryFilter::FilterPitchImplementation(float prevReading, float reading1, float reading2) {
     float filteredValue;
-    filteredValue = (weightPitch * reading1) + ((1 - weightPitch) * reading2);
+    filteredValue = (weightPitch * reading1) + ((1 - weightPitch) * (prevReading + reading2));
     return filteredValue;
   }
 
@@ -79,9 +79,9 @@ float ComplimentaryFilter::FilterRollImplementation(float reading1, float readin
    * @param reading2 Reading from either accelerometer or gyroscope
    * @return the filtered value
    */
- float ComplimentaryFilter::FilterYawImplementation(float reading1, float reading2) {
+ float ComplimentaryFilter::FilterYawImplementation(float prevReading, float reading1, float reading2) {
     float filteredValue;
-    filteredValue = (weightYaw * reading1) + ((1 - weightYaw) * reading2);
+    filteredValue = (weightYaw * reading1) + ((1 - weightYaw) * (prevReading + reading2));
     return filteredValue;
    }
 

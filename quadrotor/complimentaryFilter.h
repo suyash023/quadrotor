@@ -19,9 +19,9 @@
     bool SetRollWeight(float weight);
     bool SetPitchWeight(float weight);
     bool SetYawWeight(float weight);
-    float FilterRollImplementation(float reading1, float reading2);
-    float FilterPitchImplementation(float reading1, float reading2);
-    float FilterYawImplementation(float reading1, float reading2);
+    float FilterRollImplementation(float prevReading,float reading1, float reading2);
+    float FilterPitchImplementation(float prevReading,float reading1, float reading2);
+    float FilterYawImplementation(float prevReading,float reading1, float reading2);
     void DisplayValues(float readingRoll, float readingPitch, float readingYaw);
  };
 

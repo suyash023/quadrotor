@@ -37,6 +37,12 @@ float PIDController::RunPID(float currentValue, float targetValue) {
   errorDiff = error - lastError;
   correction = kp* ( error ) + ki * ( errorSum ) + kd * (errorDiff);
   lastError = error;
+//  if(correction > 10) {
+//    correction = 10;
+//  }
+//  else if(correction < -10) {
+//    correction = -10;
+//  }
   return correction;
 }
 

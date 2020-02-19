@@ -9,30 +9,67 @@ PIDController pitchControl, rollControl, yawControl;
 Motor motor1, motor2, motor3, motor4;
 int quadSpeed = 0;
 int incrementalSpeed = 10;
+float rollReading = 0.0;
+float pitchReading = 0.0;
 void setup() {
   // put your setup code here, to run once:
   mpu6050.Setup();
   mpu6050.GyroCorrection();
   mpu6050.AccCorrection();
   Serial.begin(38400);
-  cf.SetRollWeight(0.9);
-  cf.SetPitchWeight(0.9);
-  rollControl.SetPIDValues(1, 0, 0);
-  pitchControl.SetPIDValues(1, 0, 0);
-  yawControl.SetPIDValues(1, 0, 0);
+  cf.SetRollWeight(0.1);
+  cf.SetPitchWeight(0.1);
+  rollControl.SetPIDValues(0.5, 0, 0);
+  pitchControl.SetPIDValues(0.5, 0, 0);
+  yawControl.SetPIDValues(0.5, 0, 0);
   motor1.setMotorPin(11);
   motor2.setMotorPin(3);
   motor3.setMotorPin(6);
   motor4.setMotorPin(10);
-  //motor1.StartUp(200);
-  //motor2.StartUp(200);
-  //motor3.StartUp(200);
-  //motor4.StartUp(200);
-  //quadSpeed = 200;
+  for(int i = 0; i< 50; i++) {
+    
+  motor1.setMotorSpeed(i);
+  motor2.setMotorSpeed(i);
+  motor3.setMotorSpeed(i);
+  motor4.setMotorSpeed(i);
+  }
+  quadSpeed = 50;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  mpu6050.lastTime = millis();
+  mpu6050.ReadRawValues();
+  mpu6050.ConvertToReal();
+  mpu6050.GyroCorrection();
+  mpu6050.ComputeRPacc();
+  mpu6050.ComputeRPYgyro();
+  mpu6050.AccCorrection();
+
+  rollReading = cf.FilterRollImplementation(  rollReading, mpu6050.roll_acc, mpu6050.roll_gyro);
+  pitchReading = cf.FilterPitchImplementation( pitchReading, mpu6050.pitch_acc, mpu6050.pitch_gyro);
+  int rollCorrection = (int)(rollControl.RunPID( rollReading, 0)/2);
+  int pitchCorrection = (int)(pitchControl.RunPID( pitchReading, 0)/2);
+  int yawCorrection = (int)(yawControl.RunPID( mpu6050.gyro_x, 0)/2);
+  //cf.DisplayValues(rollReading, pitchReading, 0);
+  if (quadSpeed > 0 ) {
+//    motor1.setMotorSpeed((quadSpeed + rollCorrection));
+//    motor4.setMotorSpeed((quadSpeed + rollCorrection));
+//    motor2.setMotorSpeed((quadSpeed - rollCorrection));
+//    motor3.setMotorSpeed((quadSpeed - rollCorrection));
+//    delay(10);
+//
+//    motor1.setMotorSpeed((quadSpeed + pitchCorrection));
+//    motor2.setMotorSpeed((quadSpeed + pitchCorrection));
+//    motor3.setMotorSpeed((quadSpeed - pitchCorrection));
+//    motor4.setMotorSpeed((quadSpeed - pitchCorrection));
+//    delay(10);
+    motor1.setMotorSpeed(quadSpeed + yawCorrection);
+    motor3.setMotorSpeed(quadSpeed + yawCorrection);
+    motor4.setMotorSpeed(quadSpeed - yawCorrection);
+    motor2.setMotorSpeed(quadSpeed - yawCorrection);
+    delay(10);
+  }
   if(Serial.available()) {
     char command;
     command = Serial.read();
@@ -67,27 +104,14 @@ void loop() {
       motor2.setMotorSpeed(0);
       motor3.setMotorSpeed(0);
       motor4.setMotorSpeed(0);
+      rollControl.ResetErrors();
+      pitchControl.ResetErrors();
+      yawControl.ResetErrors();
       quadSpeed = 0;
+    } else if (command == 'd') {
+      //cf.DisplayValues(rollReading, pitchReading, 0);
+      mpu6050.DisplayValues();
     }
-  }
-  mpu6050.lastTime = millis();
-  mpu6050.ReadRawValues();
-  mpu6050.ConvertToReal();
-  mpu6050.GyroCorrection();
-  mpu6050.ComputeRPacc();
-  mpu6050.ComputeRPYgyro();
-  mpu6050.AccCorrection();
-  float rollReading = cf.FilterRollImplementation(  mpu6050.roll_acc, mpu6050.roll_gyro);
-  float pitchReading = cf.FilterPitchImplementation( mpu6050.pitch_acc, mpu6050.pitch_gyro);
-  unsigned char rollCorrection = (unsigned char)(rollControl.RunPID( rollReading, 0)/2);
-  unsigned char pitchCorrection = (unsigned char)(pitchControl.RunPID( pitchReading, 0)/2);
-  unsigned char yawCorrection = (unsigned char)(yawControl.RunPID( mpu6050.gyro_x, 0)/2);
-  //cf.DisplayValues(rollReading, pitchReading, 0);
-  if (quadSpeed > 0 ) {
-    motor1.setMotorSpeed((quadSpeed + rollCorrection));
-    motor4.setMotorSpeed((quadSpeed + rollCorrection));
-    motor2.setMotorSpeed((quadSpeed - rollCorrection));
-    motor3.setMotorSpeed((quadSpeed - rollCorrection));
   }
   //Serial.print("Motor 1 speed: ");
   //Serial.println(motor1.motorSpeed);

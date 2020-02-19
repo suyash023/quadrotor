@@ -6,11 +6,11 @@
 void Motor::setMotorSpeed(int speedVoltLevel) {
   if (speedVoltLevel <= 255 && speedVoltLevel >= 0) {
     analogWrite(motorPin, speedVoltLevel); 
-    delay(50);
+    //delay(50);
     motorSpeed = speedVoltLevel;
   } else {
     analogWrite(motorPin, motorSpeed);
-    delay(50);
+    //delay(50);
   }
 }
 
