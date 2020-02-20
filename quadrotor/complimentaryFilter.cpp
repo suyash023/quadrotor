@@ -100,3 +100,18 @@ float ComplimentaryFilter::FilterRollImplementation(float prevReading, float rea
       Serial.println(readingYaw);
       delay(10);
     }
+
+    /**
+    * @brief Function to plot filtered values
+    * @param reading_acc reading from accelerometer
+    * @param reading_gryo reading from gyroscope
+    * @return none
+    */
+  void ComplimentaryFilter::PlotValues(float readingRoll, float readingPitch, float readingYaw) {
+      Serial.print(readingRoll);
+      Serial.print(" ");
+      Serial.print(readingPitch);
+      Serial.print(" ");
+      Serial.println(readingYaw);
+      delay(10);
+    }

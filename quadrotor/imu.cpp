@@ -11,6 +11,7 @@
  */
 
  void IMU::Setup() {
+  Wire.setClock(400000);
   Wire.begin();
   Wire.beginTransmission(this->mpu_addr);
   Wire.write(0x6b); //set power management to 1.

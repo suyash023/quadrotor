@@ -26,7 +26,7 @@ bool PIDController::SetPIDValues(float kpIn, float kiIn, float kdIn) {
  */
 
 
-float PIDController::RunPID(float currentValue, float targetValue) {
+float PIDController::RunPID(float currentValue, float targetValue, float gyroValue) {
   float error = 0;
   float errorDiff = 0;
   float correction;
@@ -35,7 +35,7 @@ float PIDController::RunPID(float currentValue, float targetValue) {
   //Serial.println(error);
   errorSum = errorSum + error;
   errorDiff = error - lastError;
-  correction = kp* ( error ) + ki * ( errorSum ) + kd * (errorDiff);
+  correction = kp* ( error ) + ki * ( errorSum ) + kd * (gyroValue);
   lastError = error;
 //  if(correction > 10) {
 //    correction = 10;

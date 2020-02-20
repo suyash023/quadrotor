@@ -23,6 +23,7 @@
     float FilterPitchImplementation(float prevReading,float reading1, float reading2);
     float FilterYawImplementation(float prevReading,float reading1, float reading2);
     void DisplayValues(float readingRoll, float readingPitch, float readingYaw);
+    void PlotValues(float readingRoll, float readingPitch, float readingYaw);
  };
 
  #endif

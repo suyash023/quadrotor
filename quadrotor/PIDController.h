@@ -20,7 +20,7 @@
 
   public:
       bool SetPIDValues(float kp, float ki, float kd);
-      float RunPID(float currentValue, float TargetValue);
+      float RunPID(float currentValue, float TargetValue, float gyroValue);
       void ResetErrors();
  };
 

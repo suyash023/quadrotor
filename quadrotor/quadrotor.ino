@@ -17,10 +17,10 @@ void setup() {
   mpu6050.GyroCorrection();
   mpu6050.AccCorrection();
   Serial.begin(38400);
-  cf.SetRollWeight(0.9);
-  cf.SetPitchWeight(0.9);
-  rollControl.SetPIDValues(10, 0, 1);
-  pitchControl.SetPIDValues(10, 0, 1);
+  cf.SetRollWeight(0.7);
+  cf.SetPitchWeight(0.7);
+  rollControl.SetPIDValues(0.1, 0.05, 0.2);
+  pitchControl.SetPIDValues(0.1, 0.05, 0.2);
   yawControl.SetPIDValues(10, 0, 0);
   
   motor1.setMotorPin(11);
@@ -42,9 +42,9 @@ void loop() {
 
   rollReading = cf.FilterRollImplementation(  rollReading, mpu6050.roll_acc, mpu6050.roll_gyro);
   pitchReading = cf.FilterPitchImplementation( pitchReading, mpu6050.pitch_acc, mpu6050.pitch_gyro);
-  int rollCorrection = (int)(rollControl.RunPID( rollReading, 0)/2);
-  int pitchCorrection = (int)(pitchControl.RunPID( pitchReading, 0)/2);
-  int yawCorrection = (int)(yawControl.RunPID( mpu6050.gyro_x, 0)/2);
+  int rollCorrection = (int)(rollControl.RunPID( rollReading, 0, mpu6050.gyro_z)/2);
+  int pitchCorrection = (int)(pitchControl.RunPID( pitchReading, 0, mpu6050.gyro_y)/2);
+  int yawCorrection = (int)(yawControl.RunPID( mpu6050.gyro_x, 0, 0)/2);
   //cf.DisplayValues(rollReading, pitchReading, 0);
   if (quadSpeed > 0 ) {
 //    motor1.setMotorSpeed((quadSpeed + rollCorrection));
@@ -108,17 +108,18 @@ void loop() {
       yawControl.ResetErrors();
       quadSpeed = 0;
     } else if (command == 'd') {
-      //cf.DisplayValues(rollReading, pitchReading, 0);
-      mpu6050.DisplayValues();
+      cf.DisplayValues(rollReading, pitchReading, 0);
+      //mpu6050.DisplayValues();
     }
   }
-  //Serial.print("Motor 1 speed: ");
-  //Serial.println(motor1.motorSpeed);
-  //Serial.print("Motor 2 speed: ");
-  //Serial.println(motor2.motorSpeed);
-  //Serial.print("Motor 3 speed: ");
-  //Serial.println(motor3.motorSpeed);
-  //Serial.print("Motor 4 speed: ");
-  //Serial.println(motor4.motorSpeed);
+  //cf.PlotValues(rollReading, pitchReading, 0);
+//  Serial.print("Motor 1 speed: ");
+//  Serial.println(motor1.motorSpeed);
+//  Serial.print("Motor 2 speed: ");
+//  Serial.println(motor2.motorSpeed);
+//  Serial.print("Motor 3 speed: ");
+//  Serial.println(motor3.motorSpeed);
+//  Serial.print("Motor 4 speed: ");
+//  Serial.println(motor4.motorSpeed);
   //delay(10); 
 }
