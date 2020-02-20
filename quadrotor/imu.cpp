@@ -16,6 +16,11 @@
   Wire.write(0x6b); //set power management to 1.
   Wire.write(0); //wake up MPU 6050
   Wire.endTransmission(true);
+  Wire.beginTransmission(this->mpu_addr);
+  Wire.write(0x1A);                    // write to address 26 of the register
+  Wire.write(0x06);                    // options here are 0x00 which is off, and 0x01, 0x02, 0x03, 0x04, 0x05, 0x06
+  Wire.endTransmission(true);
+  delay(100);
  }
 
 /**
@@ -76,7 +81,7 @@ void IMU::ConvertToReal() {
     Serial.print("The Pitch angle by accelerometer is: ");
     Serial.println(pitch_acc);
     Serial.print("The Yaw angle by gyroscope is : ");
-    Serial.println(yaw_gyro);
+    Serial.println(gyro_x);
     Serial.print("The pitch angle by gyroscope is : ");
     Serial.println(pitch_gyro);
     Serial.print("The roll angle by gyroscope is : ");

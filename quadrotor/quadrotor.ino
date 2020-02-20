@@ -17,23 +17,17 @@ void setup() {
   mpu6050.GyroCorrection();
   mpu6050.AccCorrection();
   Serial.begin(38400);
-  cf.SetRollWeight(0.1);
-  cf.SetPitchWeight(0.1);
-  rollControl.SetPIDValues(0.5, 0, 0);
-  pitchControl.SetPIDValues(0.5, 0, 0);
-  yawControl.SetPIDValues(0.5, 0, 0);
+  cf.SetRollWeight(0.9);
+  cf.SetPitchWeight(0.9);
+  rollControl.SetPIDValues(10, 0, 1);
+  pitchControl.SetPIDValues(10, 0, 1);
+  yawControl.SetPIDValues(10, 0, 0);
+  
   motor1.setMotorPin(11);
   motor2.setMotorPin(3);
   motor3.setMotorPin(6);
   motor4.setMotorPin(10);
-  for(int i = 0; i< 50; i++) {
-    
-  motor1.setMotorSpeed(i);
-  motor2.setMotorSpeed(i);
-  motor3.setMotorSpeed(i);
-  motor4.setMotorSpeed(i);
-  }
-  quadSpeed = 50;
+  
 }
 
 void loop() {
@@ -59,16 +53,21 @@ void loop() {
 //    motor3.setMotorSpeed((quadSpeed - rollCorrection));
 //    delay(10);
 //
-//    motor1.setMotorSpeed((quadSpeed + pitchCorrection));
-//    motor2.setMotorSpeed((quadSpeed + pitchCorrection));
-//    motor3.setMotorSpeed((quadSpeed - pitchCorrection));
-//    motor4.setMotorSpeed((quadSpeed - pitchCorrection));
+//    motor1.setMotorSpeed((quadSpeed - pitchCorrection));
+//    motor2.setMotorSpeed((quadSpeed - pitchCorrection));
+//    motor3.setMotorSpeed((quadSpeed + pitchCorrection));
+//    motor4.setMotorSpeed((quadSpeed + pitchCorrection));
 //    delay(10);
-    motor1.setMotorSpeed(quadSpeed + yawCorrection);
-    motor3.setMotorSpeed(quadSpeed + yawCorrection);
-    motor4.setMotorSpeed(quadSpeed - yawCorrection);
-    motor2.setMotorSpeed(quadSpeed - yawCorrection);
-    delay(10);
+//    motor1.setMotorSpeed(quadSpeed + yawCorrection);
+//    motor3.setMotorSpeed(quadSpeed + yawCorrection);
+//    motor4.setMotorSpeed(quadSpeed - yawCorrection);
+//    motor2.setMotorSpeed(quadSpeed - yawCorrection);
+//    delay(10);
+      motor1.setMotorSpeed((quadSpeed + rollCorrection - pitchCorrection + yawCorrection));
+      motor4.setMotorSpeed((quadSpeed + rollCorrection + pitchCorrection - yawCorrection));
+      motor2.setMotorSpeed((quadSpeed - rollCorrection - pitchCorrection - yawCorrection));
+      motor3.setMotorSpeed((quadSpeed - rollCorrection + pitchCorrection + yawCorrection));
+      //delay(5);
   }
   if(Serial.available()) {
     char command;
@@ -77,10 +76,10 @@ void loop() {
       Serial.print("quad speed: ");
       if ( quadSpeed < 255) {
         quadSpeed = quadSpeed + incrementalSpeed;
-        motor1.setMotorSpeed(quadSpeed);
-        motor2.setMotorSpeed(quadSpeed);
-        motor3.setMotorSpeed(quadSpeed);
-        motor4.setMotorSpeed(quadSpeed);
+//        motor1.setMotorSpeed(quadSpeed);
+//        motor2.setMotorSpeed(quadSpeed);
+//        motor3.setMotorSpeed(quadSpeed);
+//        motor4.setMotorSpeed(quadSpeed);
       } else {
         Serial.println("Already at full speed");
       }
@@ -89,10 +88,10 @@ void loop() {
       Serial.print("quad speed: ");
       if (quadSpeed > incrementalSpeed ) {
         quadSpeed = quadSpeed - incrementalSpeed;
-        motor1.setMotorSpeed(quadSpeed);
-        motor2.setMotorSpeed(quadSpeed);
-        motor3.setMotorSpeed(quadSpeed);
-        motor4.setMotorSpeed(quadSpeed);
+//        motor1.setMotorSpeed(quadSpeed);
+//        motor2.setMotorSpeed(quadSpeed);
+//        motor3.setMotorSpeed(quadSpeed);
+//        motor4.setMotorSpeed(quadSpeed);
         
       } else {
         Serial.println("Already at low speed");
